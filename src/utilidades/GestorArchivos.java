@@ -178,7 +178,8 @@ public class GestorArchivos {
                 }
 
                 // Crear instancia de reserva válida
-                new Reserva(datosCompletos[0], datosCompletos[1], datosCompletos[2], datosCompletos[3]);
+                Reserva r = new Reserva(datosCompletos[0], datosCompletos[1], datosCompletos[2], datosCompletos[3]);
+                GestorReservas.agregarReserva(r); // Aquí se incrementa el contador
 
                 // Guardar reserva válida en archivo por destino
                 String archivoPorDestino = "src/Ejercicio3/reserva_" + datosCompletos[3].toLowerCase() + ".txt";
