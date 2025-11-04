@@ -98,6 +98,7 @@ public class GestorArchivos {
 
             String linea;
             while ((linea = lector.readLine()) != null) {
+                if (linea.trim().isEmpty()) continue; // ignorar líneas vacías
                 String[] datos = linea.split(",");
 
                 // Crear la reserva según si tiene destino o no
@@ -146,8 +147,17 @@ public class GestorArchivos {
 
         try (BufferedReader lector = new BufferedReader(new FileReader(archivoMaestro))) {
 
+            // Leer y descartar la primera línea de encabezados (si existe)
+            String primeraLinea = lector.readLine();
+            if (primeraLinea == null) {
+                // archivo vacío
+                return;
+            }
+
             String linea;
             while ((linea = lector.readLine()) != null) {
+                if (linea.trim().isEmpty()) continue; // ignorar líneas vacías
+
                 String[] datos = linea.split(",");
                 String[] nombresCampos = {"NumeroAsiento", "NombrePasajero", "Clase", "Destino"};
 
@@ -166,7 +176,7 @@ public class GestorArchivos {
                 for (int i = 0; i < 4; i++) {
                     if (datosCompletos[i].isEmpty()) {
                         lineaValida = false;
-                        if (!descripcionError.isEmpty()) descripcionError.append("; ");
+                        if (descripcionError.length() > 0) descripcionError.append("; ");
                         descripcionError.append("Falta el campo '").append(nombresCampos[i]).append("'");
                     }
                 }
@@ -181,10 +191,11 @@ public class GestorArchivos {
                 Reserva r = new Reserva(datosCompletos[0], datosCompletos[1], datosCompletos[2], datosCompletos[3]);
                 GestorReservas.agregarReserva(r); // Aquí se incrementa el contador
 
-                // Guardar reserva válida en archivo por destino
-                String archivoPorDestino = "src/Ejercicio3/reserva_" + datosCompletos[3].toLowerCase() + ".txt";
+                // Guardar reserva válida en archivo por destino (nombre normalizado)
+                String destinoNormalizado = datosCompletos[3].toLowerCase().replaceAll("\\s+", "_");
+                String archivoPorDestino = "src/Ejercicio3/reserva_" + destinoNormalizado + ".txt";
                 crearArchivo(archivoPorDestino);
-                escribirArchivo(archivoPorDestino, linea);
+                escribirArchivo(archivoPorDestino, linea.trim());
             }
 
         } catch (Exception e) {
